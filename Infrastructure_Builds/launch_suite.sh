@@ -8,15 +8,42 @@ fi
 specified_host=$1
 deployment_location=$2
 
-# Ensure that the suite is checked in
-fcm_status=$(fcm stat)
-if [ -z "$fcm_status" ]; then
-    suite_url=$(fcm info | grep URL | grep -v Relative);
-    suite_revision=$(fcm info | grep Revision);
+# Ensure that the branch has been checked in
+git_status=$(git status)
+if [[ $git_status == *"nothing to commit, working tree clean"* ]]; then
+    echo "Suite checked in, running in deployment mode"
 else
     echo "The suite working copy must be checked in to run in deployment mode"
     exit 999
 fi
+
+# Get our remote repository location, and check that it exists on github
+remote_url=($(git remote -v))
+remote_url=${remote_url[1]}
+if [[ $remote_url == "git@github.com"* ]]; then
+    echo "The suite has a remote url $remote_url"
+else
+    echo 'This suite must be connected to an upstream repository in github'
+    exit 999
+fi
+
+fullhash=$(git log -n 1 --pretty=format:"%H")
+# Check to see if the commit exists upstream
+git branch -r --contains $fullhash
+if [[ $? == 0 ]]; then
+    echo 'The remote repository contains this hash'
+else
+    echo 'The remote repository does not contain the current hash. Please push changes'
+    exit 999
+fi
+
+
+# Get our parameters
+suite_url=$relative_path_to_suite
+#Suite revision is branch name and hash
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+trunc_hash=$(git log -n 1 --pretty=format:"%h")
+suite_revision="$branch_name""_""$trunc_hash"
 
 cd infrastructure_suite
 
@@ -62,4 +89,4 @@ echo "Running launch suite as $run_name. Deploying modules to $specified_host"
 echo $suite_url
 echo $suite_revision
 
-rose suite-run --define-suite="DEPLOYMENT_HOST='$specified_host'" --define-suite="MODULE_BASE='$deployment_location'" --define-suite="SUITE_URL='$suite_url'" --define-suite="SUITE_REVISION='$suite_revision'" --name="$run_name" --new
+echo "rose suite-run --define-suite="DEPLOYMENT_HOST='$specified_host'" --define-suite="MODULE_BASE='$deployment_location'" --define-suite="SUITE_URL='$suite_url'" --define-suite="SUITE_REVISION='$suite_revision'" --name="$run_name" --new"
