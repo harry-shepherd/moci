@@ -73,17 +73,6 @@ set version $PRG_ENV_VERSION
 
 EOF
 
-for mod in $MODULE_STR; do
-    if [[ $mod == *'PrgEnv'* ]]; then
-	line="module swap PrgEnv-cray $mod"
-    else
-	line="module load $mod"
-    fi
-    cat <<EOF >>$module_file
-$line
-EOF
-done
-
 # now do the oasis and xios modules
 if [ "XIOS_ONLY" = "True" ]; then
     line="module load $XIOS_MODULE_PATH";
