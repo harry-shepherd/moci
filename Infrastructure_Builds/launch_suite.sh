@@ -29,7 +29,7 @@ fi
 
 fullhash=$(git log -n 1 --pretty=format:"%H")
 # Check to see if the commit exists upstream
-git branch -r --contains $fullhash
+git ls-remote $remote_url | grep $fullhash
 if [[ $? == 0 ]]; then
     echo 'The remote repository contains this hash'
 else
