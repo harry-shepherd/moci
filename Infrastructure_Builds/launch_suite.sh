@@ -89,4 +89,4 @@ echo "Running launch suite as $run_name. Deploying modules to $specified_host"
 echo $suite_url
 echo $suite_revision
 
-echo "rose suite-run --define-suite="DEPLOYMENT_HOST='$specified_host'" --define-suite="MODULE_BASE='$deployment_location'" --define-suite="SUITE_URL='$suite_url'" --define-suite="SUITE_REVISION='$suite_revision'" --name="$run_name" --new"
+echo "cylc vip -S "DEPLOYMENT_HOST='$specified_host'" -S "MODULE_BASE='$deployment_location'" -S "SUITE_URL='$suite_url'" -S "SUITE_REVISION='$suite_revision'" --workflow-name="$run_name""
