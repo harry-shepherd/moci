@@ -88,4 +88,4 @@ echo "Running launch suite as $run_name. Deploying modules to $specified_host"
 echo $remote_url
 echo $suite_revision
 
-echo "cylc vip -S "DEPLOYMENT_HOST='$specified_host'" -S "MODULE_BASE='$deployment_location'" -S "SUITE_URL='$remote_url'" -S "SUITE_REVISION='$suite_revision'" --workflow-name="$run_name""
+cylc vip -S "DEPLOYMENT_HOST='$specified_host'" -S "MODULE_BASE='$deployment_location'" -S "SUITE_URL='$remote_url'" -S "SUITE_REVISION='$suite_revision'" --workflow-name="$run_name"
