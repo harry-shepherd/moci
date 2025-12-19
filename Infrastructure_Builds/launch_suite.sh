@@ -39,7 +39,6 @@ fi
 
 
 # Get our parameters
-suite_url=$relative_path_to_suite
 #Suite revision is branch name and hash
 branch_name=$(git rev-parse --abbrev-ref HEAD)
 trunc_hash=$(git log -n 1 --pretty=format:"%h")
@@ -86,7 +85,7 @@ run_name="${current_directory}_deploy_${specified_host}"
 echo "Running launch suite as $run_name. Deploying modules to $specified_host"
 
 
-echo $suite_url
+echo $remote_url
 echo $suite_revision
 
-echo "cylc vip -S "DEPLOYMENT_HOST='$specified_host'" -S "MODULE_BASE='$deployment_location'" -S "SUITE_URL='$suite_url'" -S "SUITE_REVISION='$suite_revision'" --workflow-name="$run_name""
+echo "cylc vip -S "DEPLOYMENT_HOST='$specified_host'" -S "MODULE_BASE='$deployment_location'" -S "SUITE_URL='$remote_url'" -S "SUITE_REVISION='$suite_revision'" --workflow-name="$run_name""
