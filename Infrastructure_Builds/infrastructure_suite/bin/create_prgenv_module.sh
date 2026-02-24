@@ -28,7 +28,7 @@ if [ -z "$SUITE_REVISION" ]; then
     SUITE_REVISION='Revision: undefined'
     revision='undefined'
 else
-    revision=$(echo $SUITE_REVISION | grep -oP '\d+')
+    revision=$SUITE_REVISION
 fi
 
 module_file_path=$MODULE_BASE/modules/$PRG_ENV_NAME/$PRG_ENV_VERSION
