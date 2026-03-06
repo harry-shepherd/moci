@@ -91,8 +91,6 @@ END DO
 
 CALL xios_context_finalize()
 
-CALL MPI_COMM_FREE(comm, ierr)
-
 CALL xios_finalize()
 
 CALL MPI_FINALIZE(ierr)

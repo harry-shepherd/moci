@@ -116,12 +116,22 @@
         [[[environment]]]
             XIOSPATH=$CYLC_SUITE_RUN_DIR/share/xios
     [[extract_xios_background]]
+{% if XIOS_GIT == true %}
+        inherit = XIOS, LOCALHOST
+        script='rose task-run --verbose --command-key=git'
+        [[[environment]]]
+	    HPC_HOST={{HPC_HOST}}
+	    ROSE_TASK_APP=extract_xios
+	    XIOS_GIT_REPOSITORY={{XIOS_GIT_REPOSITORY}}
+	    XIOS_HASH={{XIOS_HASH}}
+{% else %}
         inherit = XIOS, HPC_SERIAL
         [[[environment]]]
             ROSE_TASK_APP=extract_xios
             XIOS_VERSION={{XIOS_VERSION}}
 	    XIOS_REV={{XIOS_REV}}
 	    XIOS_URL={{XIOS_URL}}
+{% endif %}
     [[build_xios]]
         inherit = None, HPC, XIOS
 	execution time limit = PT2H
@@ -141,9 +151,15 @@
     [[create_xios_module]]
         inherit = None, HPC_SERIAL, XIOS
 	[[[environment]]]
-	    XIOS_URL={{XIOS_URL}}
+{% if XIOS_GIT == true %}
+            XIOS_URL={{XIOS_GIT_REPOSITORY}}
+            XIOS_REV={{XIOS_HASH}}
+	    XIOS_VERSION=""
+{% else %}
+            XIOS_URL={{XIOS_URL}}
+            XIOS_REV={{XIOS_REV}}
 	    XIOS_VERSION={{XIOS_VERSION}}
-	    XIOS_REV={{XIOS_REV}}
+{% endif %}
 	    XIOS_MOD_VERSION={{XIOS_MOD_VERSION}}
 	    XIOS_MOD_NAME={{XIOS_MOD_NAME}}
 {% if SUITE_URL is defined %}
