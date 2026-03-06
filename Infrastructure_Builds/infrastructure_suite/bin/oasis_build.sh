@@ -78,7 +78,7 @@ f90FLAGS_1  = $(F90FLAGS_1)
 FFLAGS_1    = $(F90FLAGS_1)
 fFLAGS_1    = $(F90FLAGS_1)
 CCFLAGS_1   = $(PSMILE_INCDIR) $(CPPDEF) 
-LDFLAGS   =  -h byteswapio 
+LDFLAGS   =
 #
 ###################
 #
