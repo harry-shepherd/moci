@@ -63,13 +63,17 @@ def _update_iodef(
             line = line.replace(text_bool[not is_coupled_mode], \
                                 text_bool[is_coupled_mode])
         # Update the list of coupled components
-        elif '<!' not in line and 'oasis_codes_id' in line:
-            if xios_version == '3':
-                # XIOS3 doesn't have oasis_codes_id variable
-                line = ''
-            elif oasis_components.strip():
-                line = '<variable id="oasis_codes_id"   type="string" >' \
-                   + oasis_components+'</variable>'
+        elif '<!' not in line and ('oasis_codes_id' in line or
+                                   'clients_code_id' in line):
+            if oasis_components.strip():
+                if xios_version == '3':
+                    # The appropriate variable is clients_code_id
+                    line = '<variable id="clients_code_id"   type="string" >' \
+                        + oasis_components+'</variable>'
+                else:
+                    # For XIOS2/2.5 the appropriate variable is oasis_codes_id
+                    line = '<variable id="oasis_codes_id"   type="string" >' \
+                        + oasis_components+'</variable>'
             else:
                 line =  '<!-- oasis_codes_id not required -->'
 
