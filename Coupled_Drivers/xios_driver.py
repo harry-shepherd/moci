@@ -63,7 +63,10 @@ def _update_iodef(
                                 text_bool[is_coupled_mode])
         # Update the list of coupled components
         elif '<!' not in line and 'oasis_codes_id' in line:
-            if oasis_components.strip():
+            if xios_envar['XIOS_VERSION'] == '3':
+                # XIOS3 doesn't have oasis_codes_id variable
+                line = ''
+            elif oasis_components.strip():
                 line = '<variable id="oasis_codes_id"   type="string" >' \
                    + oasis_components+'</variable>'
             else:
