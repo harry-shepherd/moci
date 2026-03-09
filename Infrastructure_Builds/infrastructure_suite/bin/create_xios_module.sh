@@ -30,8 +30,6 @@ fi
 if [ -z "$SUITE_REVISION" ]; then
     SUITE_REVISION='Revision: undefined'
     revision='undefined'
-else
-    revision=$SUITE_REVISION
 fi
 
 xios_mod_version_path=$XIOS_MOD_NAME/$XIOS_MOD_VERSION/$revision
@@ -46,42 +44,37 @@ cp -r $XIOSPATH/inc $xios_dir
 cp -r $XIOSPATH/inputs $xios_dir
 cp -r $XIOSPATH/lib $xios_dir
 
-rm $MODULE_BASE/modules/$xios_mod_version_path/$XIOS_REV
-cat <<EOF >$MODULE_BASE/modules/$xios_mod_version_path/$XIOS_REV
-#%Module1.0
-proc ModulesHelp { } {
-    puts stderr "Sets up Oasis3-MCT coupler I/O server for use
+rm $MODULE_BASE/modules/$xios_mod_version_path/$XIOS_REV.lua
+cat <<EOF >$MODULE_BASE/modules/$xios_mod_version_path/$XIOS_REV.lua
+--[[
+Sets up Oasis3-MCT coupler I/O server for use
 Source URL: $XIOS_URL/$XIOS_VERSION
 Revision: $XIOS_REV
 Built using Rose suite:
 $SUITE_URL
 $SUITE_REVISION
-"
-}
+]]--
 
-module-whatis The XIOS I/O server for use with weather/climate models
-
-conflict XIOS
-
-set version $XIOS_MOD_VERSION
-set module_base $MODULE_BASE
-set xios_dir $xios_dir
+help("Sets up Oasis3-MCT coupler I/O server for use")
+whatis("The XIOS I/O server for use with weather/climate models")
 
 EOF
 # add our prerequesits to the same file
 for prereq in $MODULE_STR; do
-    cat <<EOF >>$MODULE_BASE/modules/$xios_mod_version_path/$XIOS_REV
-prereq $prereq
+    cat <<EOF >>$MODULE_BASE/modules/$xios_mod_version_path/$XIOS_REV.lua
+prereq("$prereq")
 EOF
 done;
-cat <<EOF >>$MODULE_BASE/modules/$xios_mod_version_path/$XIOS_REV
-setenv XIOS_PATH $xios_dir
-setenv xios_path $xios_dir
-setenv XIOS_INC $xios_dir/inc
-setenv XIOS_LIB $xios_dir/lib
-setenv XIOS_EXEC $xios_dir/bin/xios_server.exe
+cat <<EOF >>$MODULE_BASE/modules/$xios_mod_version_path/$XIOS_REV.lua
+setenv("XIOS_PATH", "$xios_dir")
+setenv("xios_path", "$xios_dir")
+setenv("XIOS_INC", "$xios_dir/inc")
+setenv("XIOS_LIB", "$xios_dir/lib")
+setenv("XIOS_EXEC", "$xios_dir/bin/xios_server.exe")
 
-prepend-path PATH $xios_dir/bin
+prepend_path("PATH", "$xios_dir/bin")
+prepend_path("FFLAGS", "-I${xios_dir}/inc", " ")
+prepend_path("LDFLAGS", "-L${xios_dir}/lib", " ")
 
 EOF
 
@@ -91,10 +84,10 @@ EOF
 rm $CYLC_SUITE_RUN_DIR/share/use_xios_mod.sh
 cat <<EOF > $CYLC_SUITE_RUN_DIR/share/use_xios_mod.sh
 export XIOS_MODULE_USE_PATH=$MODULE_BASE/modules
-export XIOS_MODULE_PATH=$xios_mod_version_path/$XIOS_REV
+export XIOS_MODULE_PATH=$xios_mod_version_path/$XIOS_REV.lua
 EOF
 
 
 #End of script test
-ls $MODULE_BASE/modules/$xios_mod_version_path/$XIOS_REV
+ls $MODULE_BASE/modules/$xios_mod_version_path/$XIOS_REV.lua
 [ $? -eq 0 ] || exit 1

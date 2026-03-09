@@ -27,61 +27,51 @@ fi
 if [ -z "$SUITE_REVISION" ]; then
     SUITE_REVISION='Revision: undefined'
     revision='undefined'
-else
-    revision=$SUITE_REVISION
 fi
 
 module_file_path=$MODULE_BASE/modules/$PRG_ENV_NAME/$PRG_ENV_VERSION
 mkdir -p $module_file_path
-module_file=$module_file_path/$revision
+module_file=$module_file_path/$revision.lua
 
 rm -r $module_file
 cat <<EOF >>$module_file
-#%Module1.0
-proc ModulesHelp { } {
+--[[
 EOF
 if [ "$XIOS_ONLY" = "True" ]; then
     cat <<EOF >>$module_file
-    puts stderr "Sets up the programming environment for XIOS
+    Sets up the programming environment for XIOS
 EOF
 else
     cat <<EOF >>$module_file
-    puts stderr "Sets up the programming environment for XIOS and Oasis3-mct
+    Sets up the programming environment for XIOS and Oasis3-mct
 EOF
 fi
 cat <<EOF >>$module_file
 Build by Rose suite:
 Suite URL: $SUITE_URL
 Suite Revision Number: $SUITE_REVISION
-"
-}
+]]--
 EOF
 if [ "$XIOS_ONLY" = "True" ]; then
     cat <<EOF >>$module_file
-module-whatis The XIOS I/O server for use with weather/climate models
+whatis("The XIOS I/O server for use with weather/climate models")
 EOF
 else
     cat <<EOF >>$module_file
-module-whatis The XIOS I/O server and Oasis3-MCT coupler for use with weather/clmiate models
+whatis("The XIOS I/O server and Oasis3-MCT coupler for use with weather/clmiate models")
 EOF
 fi
-cat <<EOF >>$module_file
 
-conflict GC3-PrgEnv
-
-set version $PRG_ENV_VERSION
-
-EOF
 
 # now do the oasis and xios modules
 if [ "XIOS_ONLY" = "True" ]; then
-    line="module load $XIOS_MODULE_PATH";
+    line="load(\"$XIOS_MODULE_PATH\")";
     cat <<EOF >>$module_file
 $line
 EOF
 else
     for mod in $OASIS_MODULE_PATH $XIOS_MODULE_PATH; do
-	line="module load $mod"
+	line="load(\"$mod\")"
 	cat <<EOF >>$module_file
 $line
 EOF

@@ -30,8 +30,6 @@ fi
 if [ -z "$SUITE_REVISION" ]; then
     SUITE_REVISION='Revision: undefined'
     revision='undefined'
-else
-    revision=$SUITE_REVISION
 fi
 
 oasis_mod_version_path=$OASIS_MOD_NAME/$OASIS_MOD_VERSION/$revision
@@ -48,33 +46,31 @@ cp -r $PRISMPATH/$OASIS_BUILD_DIR/lib $oasis_dir/
 
 
 
-rm $MODULE_BASE/modules/$oasis_mod_version_path/$OASIS_BRANCH
-cat <<EOF >$MODULE_BASE/modules/$oasis_mod_version_path/$OASIS_BRANCH
-#%Module1.0
-proc ModulesHelp { } {
-    puts stderr "Sets up Oasis3-MCT coupler I/O server for use
+rm $MODULE_BASE/modules/$oasis_mod_version_path/$OASIS_BRANCH.lua
+cat <<EOF >$MODULE_BASE/modules/$oasis_mod_version_path/$OASIS_BRANCH.lua
+--[[
+Sets up Oasis3-MCT coupler I/O server for use
 External URL: $OASIS_REPOSITORY
 External branch: $OASIS_BRANCH
 Built using Rose suite:
 $SUITE_URL
 $SUITE_REVISION
-"
-}
+]]--
 
-module-whatis The Oasis3-mct coupler for use with weather/climate models
+help("Sets up Oasis3-MCT coupler I/O server for use")
+whatis("The Oasis3-mct coupler for use with weather/climate models")
 
-conflict $OASIS_MOD_NAME
+conflict("$OASIS_MOD_NAME")
 
-set version $OASIS_MOD_VERSION
-set module_base $MODULE_BASE
-set oasis_dir $oasis_dir
+setenv("OASIS_ROOT", "$oasis_dir")
+setenv("prism_path", "$oasis_dir")
+setenv("OASIS_INC", "$oasis_dir/inc")
+setenv("OASIS_LIB", "$oasis_dir/lib")
+setenv("OASIS3_MCT", "$OASIS_MOD_NAME")
 
-setenv OASIS_ROOT $oasis_dir
-setenv prism_path $oasis_dir
-setenv OASIS_INC $oasis_dir/inc
-setenv OASIS_LIB $oasis_dir/lib
-setenv OASIS3_MCT $OASIS_MOD_NAME
-setenv OASIS_MODULE_VERSION $OASIS_MOD_VERSION
+prepend_path("FFLAGS", "-I${oasis_dir}/build/lib/psmile.MPI1", " ")
+prepend_path("LDFLAGS", "-L${oasis_dir}/lib", " ")
+
  
 EOF
 
@@ -84,10 +80,10 @@ EOF
 rm $CYLC_SUITE_RUN_DIR/share/use_oasis_mod.sh
 cat <<EOF > $CYLC_SUITE_RUN_DIR/share/use_oasis_mod.sh
 export OASIS_MODULE_USE_PATH=$MODULE_BASE/modules
-export OASIS_MODULE_PATH=$oasis_mod_version_path/$OASIS_BRANCH
+export OASIS_MODULE_PATH=$oasis_mod_version_path/$OASIS_BRANCH.lua
 EOF
 
 
 #End of script test
-ls $MODULE_BASE/modules/$oasis_mod_version_path/$OASIS_BRANCH
+ls $MODULE_BASE/modules/$oasis_mod_version_path/$OASIS_BRANCH.lua
 [ $? -eq 0 ] || exit 1
