@@ -30,6 +30,8 @@ fi
 if [ -z "$SUITE_REVISION" ]; then
     SUITE_REVISION='Revision: undefined'
     revision='undefined'
+else
+    revision=$SUITE_REVISION
 fi
 
 oasis_mod_version_path=$OASIS_MOD_NAME/$OASIS_MOD_VERSION/$revision
