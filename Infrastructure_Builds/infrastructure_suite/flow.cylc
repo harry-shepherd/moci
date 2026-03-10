@@ -1,6 +1,5 @@
 #!jinja2
 
-{% set HPC_HOST = HPC_HOST if HPC_HOST is defined else HPC_HOST %}
 {% set HPC_HOST = DEPLOYMENT_HOST if DEPLOYMENT_HOST is defined else HPC_HOST %}
 
 
@@ -31,7 +30,7 @@
     [[LOCALHOST]]
         platform=localhost
     [[HPC]]
-	env-script = "{{MODULE_CMD}}; export LD_LIBRARY_PATH=/opt/cray/pe/pmi/6.1.11/lib:$LD_LIBRARY_PATH; echo $LD_LIBRARY_PATH"
+	env-script = "{{MODULE_CMD}}; echo $LD_LIBRARY_PATH"
 	platform = {{HPC_HOST}}
     [[HPC_SERIAL]]
         inherit = None, HPC
