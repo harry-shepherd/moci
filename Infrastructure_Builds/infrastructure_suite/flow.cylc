@@ -30,7 +30,7 @@
     [[LOCALHOST]]
         platform=localhost
     [[HPC]]
-	env-script = "{{MODULE_CMD}}; echo $LD_LIBRARY_PATH"
+	env-script = "{{MODULE_CMD}}"
 	platform = {{HPC_HOST}}
     [[HPC_SERIAL]]
         inherit = None, HPC
@@ -179,7 +179,7 @@
     [[create_prgenv_module]]
         inherit = None, HPC_SERIAL
 	env-script = """
-		     {{MODULE_CMD}}; export LD_LIBRARY_PATH=/opt/cray/pe/pmi/6.1.11/lib:$LD_LIBRARY_PATH;
+		     {{MODULE_CMD}};
 {% if not XIOS_ONLY %}
 		     eval $(cat $CYLC_SUITE_RUN_DIR/share/use_oasis_mod.sh);
 {% endif %}
