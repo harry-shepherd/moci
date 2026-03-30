@@ -75,7 +75,7 @@ cat << EOF > arch-EX_UKMO.fcm
 %BASE_CFLAGS     -std=c++11 -DMPICH_SKIP_MPICXX 
 
 ## Otherwise take your pick of these, refer to information above.
-%PROD_CFLAGS    -O1 -DBOOST_DISABLE_ASSERTS 
+%PROD_CFLAGS    -g -O0 -DBOOST_DISABLE_ASSERTS 
 %DEV_CFLAGS     -O2
 %DEBUG_CFLAGS   -g -O0 -DBOOST_DISABLE_ASSERTS 
 
