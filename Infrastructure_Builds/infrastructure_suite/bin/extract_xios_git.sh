@@ -12,7 +12,12 @@
 xios_repository=$XIOS_GIT_REPOSITORY
 user=${HPC_HOST_USERNAME:-$(whoami)}
 
-xios_extract_dir=xios
+# The extract directory is named after the git repositiory (but without the
+# .git suffix)
+xios_extract_dir=${xios_repository##*/}
+xios_extract_dir=${xios_extract_dir/.git/""}
+
+
 if [ -z "$XIOS_HASH" ]; then
     echo "Please specify a git hash for the XIOS source required"
     exit 999;
