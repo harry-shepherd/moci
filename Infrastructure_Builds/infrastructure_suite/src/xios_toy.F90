@@ -43,6 +43,9 @@ LOGICAL :: ok
 DOUBLE PRECISION, ALLOCATABLE :: field_A(:,:,:)
 DOUBLE PRECISION :: lval(axis_len)=1
 
+DOUBLE PRECISION, ALLOCATABLE :: latvalue(:), lonvalue(:)
+DOUBLE PRECISION :: londelta, latdelta
+
 ALLOCATE(field_A(size_i, size_j, axis_len))
 DO j=1,size_j
   DO i=1,size_i
@@ -59,6 +62,21 @@ CALL xios_initialize(id,return_comm=comm)
 CALL MPI_COMM_RANK(comm,rank,ierr)
 CALL MPI_COMM_SIZE(comm,size,ierr)
 
+!sort out our longitudes and latitudes
+ALLOCATE(lonvalue(size_j))
+ALLOCATE(latvalue(size_i*size))
+
+londelta = 360. / (DBLE(size_j))
+latdelta = 180. / (DBLE(size_i*size))
+
+DO i=1,size_j
+  lonvalue(i) = i*londelta
+END DO
+
+DO i=1,size_i*size
+  latvalue(i) = i*latdelta
+END DO
+
 CALL xios_context_initialize("test",comm)
 CALL xios_get_handle("test",ctx_hdl)
 CALL xios_set_current_context(ctx_hdl)
@@ -67,7 +85,7 @@ CALL xios_get_calendar_type(calendar_type)
 PRINT *, "calendar_type = ", calendar_type
 
 CALL xios_set_axis_attr("axis_A", n_glo=axis_len, value=lval)
-CALL xios_set_domain_attr("domain_A", data_dim=2, ni_glo=size_i, nj_glo=size_j, ibegin=0, jbegin=0, ni=size_i, nj=size_j, type='rectilinear')
+CALL xios_set_domain_attr("domain_A", data_dim=2, ni_glo=size_i*size, nj_glo=size_j, ibegin=rank*size_i, jbegin=0, ni=size_i, nj=size_j, type='rectilinear', latvalue_1d=latvalue((size_i*rank)+1:size_i*(rank+1)), lonvalue_1d=lonvalue)
 !CALL xios_set_domain_attr("domain_A", ni_glo=size_i, nj_glo=size_j, type='rectilinear')
 CALL xios_set_fieldgroup_attr("field_definition",enabled=.TRUE.)
 
