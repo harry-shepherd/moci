@@ -66,14 +66,9 @@ def _update_iodef(
         elif '<!' not in line and ('oasis_codes_id' in line or
                                    'clients_code_id' in line):
             if oasis_components.strip():
-                if xios_version == '3':
-                    # The appropriate variable is clients_code_id
-                    line = '<variable id="clients_code_id"   type="string" >' \
-                        + oasis_components+'</variable>'
-                else:
-                    # For XIOS2/2.5 the appropriate variable is oasis_codes_id
-                    line = '<variable id="oasis_codes_id"   type="string" >' \
-                        + oasis_components+'</variable>'
+                # Variable name changes at version 3
+                vname = "clients_code_id" if xios_version == '3' else "oasis_codes_id"
+                line = f'<variable id="{vname}" type="string" >{oasis_components}</variable>'
             else:
                 line =  '<!-- oasis_codes_id not required -->'
 
