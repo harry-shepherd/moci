@@ -68,9 +68,9 @@ def _update_iodef(
             if oasis_components.strip():
                 # Variable name changes at version 3
                 vname = "clients_code_id" if xios_version == '3' else "oasis_codes_id"
-                line = f'<variable id="{vname}" type="string" >{oasis_components}</variable>'
+                line = f'<variable id="{vname}" type="string" >{oasis_components}</variable>\n'
             else:
-                line =  '<!-- oasis_codes_id not required -->'
+                line =  '<!-- oasis_codes_id not required -->\n'
 
         iodef_swap.write(line)
 
